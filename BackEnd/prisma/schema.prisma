@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+// Criar uma migrat npx prisma migrate dev
+// apos migrate Dev rodas npx prisma generate
+//Abrir o Prisma na web  npx prisma studio
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  STAFF
+  ADMIN
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  role     Role   @default(STAFF)
+
+  createAd DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String
+
+  createAd DateTime  @default(now())
+  updateAt DateTime  @updatedAt
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          String  @id @default(uuid())
+  name        String
+  price       Int // centavos
+  description String
+  banner      String
+  disabel     Boolean @default(false)
+
+  itens Item[]
+
+  category_id String
+  category    Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
+
+  createAd DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  @@map("product")
+}
+
+model Orders {
+  id     String  @id @default(uuid())
+  table  Int
+  status Boolean @default(false) // false - Pendente, True - Pronto
+  draft  Boolean @default(true) // false - Rascunho, True - Enviado para produção
+  name   String?
+
+  itens Item[]
+
+  createAd DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model Item {
+  id     String @id @default(uuid())
+  amount Int
+
+  order_id String
+  orders    Orders  @relation(fields: [order_id], references: [id], onDelete: Cascade)
+
+  product_id String
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  createAd DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  @@map("items")
+}
