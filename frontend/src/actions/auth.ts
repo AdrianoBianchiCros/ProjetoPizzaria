@@ -1,17 +1,56 @@
 "use server"//Arquivo para ser executado no servidor nao do lado cliente
 
+import { apiClient} from '@/lib/api'
+import {User, AuthResponse} from "@/lib/types"
+
 export async function registerAction(
-    previState:{sucess: boolean; error: string } | null,
+    previState:{sucess: boolean; error: string , redirectTo: string} | null,
     formData: FormData
 ){
-    console.log("clicou em cadastrar")
-    const name = formData.get("name") as string
+   try{
+     const name = formData.get("name") as string
     const email = formData.get("email") as string
     const password = formData.get("password") as string
 
-    console.log(name)
-    console.log(email)
-    console.log(password)
+    const data = {
+        name:name,
+        email:email,
+        password:password
+    }
+   const user = await apiClient<User>("/users",{
+    method:"POST",
+    body: JSON.stringify(data)
+    })
 
-    return{success: true, error: "Erro ao cadastrar"}
+
+   return{success: true,error:"", redirectTo:"/login"}
+   }catch(error){
+    if(error instanceof Error){
+        return  {success: false, error: error.message}
+    }
+    return {success: false, error: "Erro ao criar conta!"}
+    }
+}
+
+export async function  loginAction(
+     previState:{sucess: boolean; error: string , redirectTo: string} | null,
+    formData: FormData
+) {
+    const email = formData.get("email") as string
+    const password = formData.get("password") as string
+
+    const data = {
+        email:email,
+        password: password
+    }
+
+
+    const response = await apiClient<AuthResponse>("/session",{
+        method:"POST",
+        body:JSON.stringify(data)
+    })
+
+    console.log(response)
+
+    return{success: true, error:"",redirectTo:"/dashboard"}
 }

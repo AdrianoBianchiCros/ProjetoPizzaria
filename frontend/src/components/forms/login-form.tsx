@@ -5,12 +5,12 @@ import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import Link from 'next/link' 
-import { registerAction } from '@/actions/auth'
+import { loginAction } from '@/actions/auth'
 import {useRouter} from 'next/navigation'
 
-export function RegisterForm(){
+export function LoginForm(){
 
-    const [state,formAction, isPending] = useActionState(registerAction, null)
+    const [state,formAction, isPending] = useActionState(loginAction, null)
     const router = useRouter()
 
     useEffect(() => {
@@ -27,17 +27,7 @@ export function RegisterForm(){
         </CardHeader>
         <CardContent>
             <form className='space-y-4' action={formAction}>
-                <div className='space-y-2'>
-                    <Label className='text-white'>Nome</Label>
-                    <Input 
-                    type='text' 
-                    id='name' 
-                    name='name'
-                    placeholder='Digite seu nome' 
-                    required minLength={3} 
-                    className='text-white bg-app-card border border-app-border ' 
-                     />
-                </div>
+             
                 <div className='space-y-2'>
                     <Label className='text-white'>E-mail</Label>
                     <Input 
@@ -61,10 +51,10 @@ export function RegisterForm(){
                      />
                 </div>
             <Button type='submit' className='w-full bg-brand-primary text-white hover: bg-brand-primary'>
-                {isPending ? "Criando conta..." : "Criar conta"}
+                {isPending ? "Acessando conta..." : "Acessar conta"}
             </Button>
             <p className='text-center text-gray-100'>
-                Já é cadastrado ? <Link className='text-brand-primary' href="/login"> Faça o login</Link>
+                Ainda não é cadastrado ? <Link className='text-brand-primary' href="/register"> Crie sua conta</Link>
             </p>
             </form>
         </CardContent>
